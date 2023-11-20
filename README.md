@@ -51,7 +51,7 @@
 
 
 ## ERD
-![ERD](https://github.com/iseungsoo07/TravelDiary/assets/36941592/d249deae-3e18-43ed-bf28-566d59ce8306)
+![ERD](https://github.com/Tonynology/Ecommerce/assets/36941592/1f81b1b7-3b02-4267-91f8-c15f4f5a9a56)
 
 
 ## 사용 기술
