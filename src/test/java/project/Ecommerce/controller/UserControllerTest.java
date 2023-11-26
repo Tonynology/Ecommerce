@@ -20,13 +20,17 @@ import project.Ecommerce.dto.SignUp;
 import project.Ecommerce.dto.SignUp.Request;
 import project.Ecommerce.dto.SignUp.Response;
 import project.Ecommerce.exception.UserException;
-import project.Ecommerce.service.UserServiceImpl;
+import project.Ecommerce.security.JwtTokenProvider;
+import project.Ecommerce.service.UserService;
 
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
 
   @MockBean
-  private UserServiceImpl userServiceImpl;
+  private UserService userService;
+
+  @MockBean
+  private JwtTokenProvider jwtTokenProvider;
 
   @Autowired
   private MockMvc mockMvc;
@@ -46,7 +50,7 @@ public class UserControllerTest {
         .location("서울 양천구")
         .build();
 
-    given(userServiceImpl.signUp(any()))
+    given(userService.signUp(any()))
         .willReturn(Response.builder()
             .name(user.getName())
             .message(user.getName() + "님이 회원가입 되었습니다.")
@@ -72,7 +76,7 @@ public class UserControllerTest {
         .location("서울 양천구")
         .build();
 
-    given(userServiceImpl.signUp(any()))
+    given(userService.signUp(any()))
         .willThrow(new UserException(USER_ALREADY_EXIST));
 
     //when
