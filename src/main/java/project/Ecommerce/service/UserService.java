@@ -1,9 +1,12 @@
 package project.Ecommerce.service;
 
-import project.Ecommerce.dto.SignUp.Request;
-import project.Ecommerce.dto.SignUp.Response;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import project.Ecommerce.dto.SignIn;
+import project.Ecommerce.dto.SignUp;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-  Response signUp(Request request);
+  SignUp.Response signUp(SignUp.Request request);
+
+  SignIn.Response signIn(SignIn.Request request);
 }
