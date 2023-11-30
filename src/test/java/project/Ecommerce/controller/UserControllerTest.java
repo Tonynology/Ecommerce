@@ -17,8 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import project.Ecommerce.dto.SignUp;
-import project.Ecommerce.dto.SignUp.Request;
-import project.Ecommerce.dto.SignUp.Response;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.security.JwtTokenProvider;
 import project.Ecommerce.service.UserService;
@@ -43,7 +41,7 @@ public class UserControllerTest {
   @DisplayName("회원가입 성공")
   void successSignUp() throws Exception {
     //given
-    SignUp.Request user = Request.builder()
+    SignUp.Request user = SignUp.Request.builder()
         .name("Jason")
         .password("abc1234")
         .email("jason@gmail.com")
@@ -51,7 +49,7 @@ public class UserControllerTest {
         .build();
 
     given(userService.signUp(any()))
-        .willReturn(Response.builder()
+        .willReturn(SignUp.Response.builder()
             .name(user.getName())
             .message(user.getName() + "님이 회원가입 되었습니다.")
             .build());
@@ -69,7 +67,7 @@ public class UserControllerTest {
   @DisplayName("회원가입 실패 - 이미 가입한 회원")
   void failSignUp() throws Exception {
     //given
-    SignUp.Request user = Request.builder()
+    SignUp.Request user = SignUp.Request.builder()
         .name("Jason")
         .password("abc1234")
         .email("jason@gmail.com")
