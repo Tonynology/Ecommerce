@@ -9,14 +9,13 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import project.Ecommerce.redis.RefreshToken;
+import project.Ecommerce.redis.RefreshTokenRepository;
 
 
 @Slf4j
@@ -24,7 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenProvider {
 
-  private final RedisTemplate<String, String> redisTemplate;
+  private final RefreshTokenRepository refreshTokenRepository;
+
 
   @Value("${spring.jwt.secret}")
   private String secretKey;
@@ -39,13 +39,15 @@ public class JwtTokenProvider {
   /**
    * Access 토큰 생성
    */
-  public String createAccessToken(Authentication authentication){
-    Claims claims = Jwts.claims().setSubject(authentication.getName());
+  public String createAccessToken(String email){
+    log.info("createAccessToken 시작");
+
+//    Claims claims = Jwts.claims().setSubject(authentication.getName());
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + accessExpirationTime);
 
     return Jwts.builder()
-        .setClaims(claims)
+        .setSubject(email)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -55,28 +57,23 @@ public class JwtTokenProvider {
   /**
    * Refresh 토큰 생성
    */
-  public String createRefreshToken(Authentication authentication){
-    Claims claims = Jwts.claims().setSubject(authentication.getName());
+  public String createRefreshToken(String  email){
+    log.info("createRefreshToken 시작");
+
+//    Claims claims = Jwts.claims().setSubject(authentication.getName());
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + refreshExpirationTime);
 
     String refreshToken = Jwts.builder()
-        .setClaims(claims)
+        .setSubject(email)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
         .compact();
 
-    log.info("redis 저장 준비. 이름 {}, 토큰 {}", authentication.getName(), refreshToken);
-
-    // redis에 저장
-    redisTemplate.opsForValue().set(
-        authentication.getName(),
-        refreshToken,
-        refreshExpirationTime,
-        TimeUnit.MILLISECONDS
+    refreshTokenRepository.save(
+        new RefreshToken(refreshToken, email)
     );
-
     return refreshToken;
   }
 

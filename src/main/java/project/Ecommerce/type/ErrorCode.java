@@ -13,6 +13,8 @@ public enum ErrorCode {
   INVALID_JWT("지원되지 않거나 잘못된 토큰 입니다."),
   NOT_EXIST_REFRESH_JWT("존재하지 않거나 만료된 Refresh 토큰입니다. 다시 로그인해주세요."),
   INVALID_USER_PW("유저의 비밀번호가 타당하지 않습니다."),
+  INVALID_USER_EMAIL("이메일이 타당하지 않습니다."),
+  INVALID_TOKEN("토큰이 타당하지 않습니다."),
   ;
 
   private final String description;

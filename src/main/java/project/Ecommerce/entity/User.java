@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Builder
 @Entity
 public class User implements UserDetails {
+  //TODO: 별도의 dto를 만들어 구현 - 영속성 문제
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
