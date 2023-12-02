@@ -10,11 +10,11 @@ import project.Ecommerce.type.ErrorCode;
 @Setter
 @AllArgsConstructor
 @Builder
-public class UserException extends RuntimeException {
+public class TokenException extends RuntimeException {
   private final ErrorCode errorCode;
   private final String errorMessage;
 
-  public UserException(ErrorCode errorCode) {
+  public TokenException(ErrorCode errorCode) {
     this.errorCode = errorCode;
     this.errorMessage = errorCode.getDescription();
   }

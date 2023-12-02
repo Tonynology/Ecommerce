@@ -8,18 +8,14 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import java.util.Base64;
 import java.util.Date;
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import project.Ecommerce.service.UserService;
+import project.Ecommerce.redis.RefreshToken;
+import project.Ecommerce.redis.RefreshTokenRepository;
 
 
 @Slf4j
@@ -27,49 +23,69 @@ import project.Ecommerce.service.UserService;
 @Component
 public class JwtTokenProvider {
 
-  private final long TOKEN_VALID_MILISECOND = 1000L * 60 * 60 * 10; // 10시간
+  private final RefreshTokenRepository refreshTokenRepository;
 
-  @Value("spring.jwt.secret")
+
+  @Value("${spring.jwt.secret}")
   private String secretKey;
 
-  private final UserService userService;
+  @Value("${spring.jwt.token.access-expiration-time}")
+  private long accessExpirationTime;
 
-  @PostConstruct
-  protected void init() {
-    secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-    log.info("Secret Key: {}", secretKey);
-  }
+  @Value("${spring.jwt.token.refresh-expiration-time}")
+  private long refreshExpirationTime;
 
-  // Jwt 토큰 생성
-  public String createToken(String userPk) {
-    Claims claims = Jwts.claims().setSubject(userPk);
 
+  /**
+   * Access 토큰 생성
+   */
+  public String createAccessToken(String email){
+    log.info("createAccessToken 시작");
+
+//    Claims claims = Jwts.claims().setSubject(authentication.getName());
     Date now = new Date();
+    Date expireDate = new Date(now.getTime() + accessExpirationTime);
 
     return Jwts.builder()
-        .setClaims(claims) // 정보 저장
-        .setIssuedAt(now)   // 토큰 발행 시간 정보
-        .setExpiration(new Date(now.getTime() + TOKEN_VALID_MILISECOND)) // 만료 시간
-        .signWith(SignatureAlgorithm.HS512, secretKey) // 암호화 알고리즘, secret 값
-        .compact(); // Token 생성
+        .setSubject(email)
+        .setIssuedAt(now)
+        .setExpiration(expireDate)
+        .signWith(SignatureAlgorithm.HS256, secretKey)
+        .compact();
   }
 
-  // JWT 토큰에서 인증 정보 조회
-  // 인증 성공시 SecurityContextHolder에 저장할 Authentication 객체 생성
-  public Authentication getAuthentication(String token) {
-    UserDetails userDetails = userService.loadUserByUsername(this.getUserPk(token));
-    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+  /**
+   * Refresh 토큰 생성
+   */
+  public String createRefreshToken(String  email){
+    log.info("createRefreshToken 시작");
+
+//    Claims claims = Jwts.claims().setSubject(authentication.getName());
+    Date now = new Date();
+    Date expireDate = new Date(now.getTime() + refreshExpirationTime);
+
+    String refreshToken = Jwts.builder()
+        .setSubject(email)
+        .setIssuedAt(now)
+        .setExpiration(expireDate)
+        .signWith(SignatureAlgorithm.HS256, secretKey)
+        .compact();
+
+    refreshTokenRepository.save(
+        new RefreshToken(refreshToken, email)
+    );
+    return refreshToken;
   }
 
-  // Jwt 토큰에서 user PK로 사용된 값을 추출한다
-  public String getUserPk(String token) {
-    return Jwts.parser().setSigningKey(secretKey)
-        .parseClaimsJws(token).getBody().getSubject();
-  }
-
-  // 헤더정보에서 Authorization의 값을 추출한다.
+  /**
+   * http 헤더로부터 bearer 토큰을 가져옴.
+   */
   public String resolveToken(HttpServletRequest req) {
-    return req.getHeader("Authorization");
+    String bearerToken = req.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+      return bearerToken.substring(7);
+    }
+    return null;
   }
 
   // Jwt Token의 유효성 및 만료 기간 검사
@@ -90,5 +106,4 @@ public class JwtTokenProvider {
     }
     return false;
   }
-
 }

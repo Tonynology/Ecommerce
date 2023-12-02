@@ -1,25 +1,26 @@
 package project.Ecommerce.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
+import project.Ecommerce.dto.ReIssue;
 import project.Ecommerce.dto.SignIn;
-import project.Ecommerce.dto.SignIn.Response;
 import project.Ecommerce.dto.SignUp;
-import project.Ecommerce.security.JwtTokenProvider;
+import project.Ecommerce.service.AuthService;
 import project.Ecommerce.service.UserService;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
   private final UserService userService;
-  private final JwtTokenProvider jwtTokenProvider;
+  private final AuthService authService;
 
   @PostMapping("/signup")
   public ResponseEntity<SignUp.Response> signUp(@RequestBody @Valid SignUp.Request request) {
@@ -27,8 +28,12 @@ public class UserController {
   }
 
   @PostMapping("/signin")
-  public ResponseEntity<?> signIn(@RequestBody @Valid SignIn.Request request) {
-    Response response = userService.signIn(request);
-    return ResponseEntity.ok(jwtTokenProvider.createToken(response.getUserName()));
+  public ResponseEntity<SignIn.Response> signIn(@RequestBody @Valid SignIn.Request request) {
+    return ResponseEntity.ok(userService.signIn(request));
+  }
+
+  @PostMapping("/reissue")
+  public ResponseEntity<ReIssue.Response> reIssue(@RequestBody @Valid ReIssue.Request request) {
+    return ResponseEntity.ok(authService.reIssue(request));
   }
 }

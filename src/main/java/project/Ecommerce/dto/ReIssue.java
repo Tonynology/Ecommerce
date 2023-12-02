@@ -6,22 +6,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-public class SignIn {
+public class ReIssue {
 
   @Getter
   @Setter
-  @NoArgsConstructor
   @AllArgsConstructor
+  @NoArgsConstructor
   @Builder
   public static class Request {
-    private String email;
-    private String password;
+    private String refreshToken;
   }
 
   @Getter
-  @Setter
-  @NoArgsConstructor
   @AllArgsConstructor
+  @NoArgsConstructor
   @Builder
   public static class Response {
     private String accessToken;
