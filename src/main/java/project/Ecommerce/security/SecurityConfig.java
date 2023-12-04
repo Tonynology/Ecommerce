@@ -1,6 +1,7 @@
 package project.Ecommerce.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
+@ComponentScan
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
