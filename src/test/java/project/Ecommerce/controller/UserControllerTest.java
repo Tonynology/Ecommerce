@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static project.Ecommerce.type.ErrorCode.INVALID_TOKEN;
 import static project.Ecommerce.type.ErrorCode.USER_ALREADY_EXIST;
 import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
 
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import project.Ecommerce.dto.ReIssue;
 import project.Ecommerce.dto.SignIn;
 import project.Ecommerce.dto.SignUp;
-import project.Ecommerce.exception.TokenException;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.security.JwtTokenProvider;
 import project.Ecommerce.service.UserService;
