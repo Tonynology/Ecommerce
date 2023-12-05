@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import project.Ecommerce.dto.UserDetail;
 import project.Ecommerce.entity.User;
 import project.Ecommerce.exception.TokenException;
 import project.Ecommerce.repository.UserRepository;
@@ -29,6 +30,6 @@ public class MemberDetailService implements UserDetailsService {
         });
     log.info("user 이름 {}, 비밀번호 {}", user.getName(), user.getPassword());
 
-    return user;
+    return new UserDetail(user.getName(), user.getPassword());
   }
 }
