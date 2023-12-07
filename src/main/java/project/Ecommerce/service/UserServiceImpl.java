@@ -59,11 +59,13 @@ public class UserServiceImpl implements UserService {
     }
 
   @Override
-  public ReIssue.Response reIssue(ReIssue.Request request) {
+  public ReIssue.Response reIssue(String request) {
     log.info("reIssue 시작");
 
+    String refreshToken = jwtTokenProvider.resolveToken(request);
+
     RefreshToken token =
-        refreshTokenRepository.findByEmail(request.getRefreshToken())
+        refreshTokenRepository.findByEmail(refreshToken)
             .orElseThrow(() ->
                 new TokenException(ErrorCode.INVALID_TOKEN));
 
@@ -71,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     return ReIssue.Response.builder()
         .accessToken(accessToken)
-        .refreshToken(request.getRefreshToken())
+        .refreshToken(refreshToken)
         .build();
   }
 }

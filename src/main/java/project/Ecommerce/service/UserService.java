@@ -8,7 +8,7 @@ public interface UserService {
 
   SignUp.Response signUp(SignUp.Request request);
   SignIn.Response signIn(SignIn.Request request);
-  ReIssue.Response reIssue(ReIssue.Request request);
+  ReIssue.Response reIssue(String request);
 
 
 }

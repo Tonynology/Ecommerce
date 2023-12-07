@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import project.Ecommerce.exception.TokenException;
 import project.Ecommerce.type.ErrorCode;
@@ -20,8 +21,11 @@ import project.Ecommerce.type.ErrorCode;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+  public static final String TOKEN_HEADER = "Authorization";
+  public static final String TOKEN_PREFIX = "Bearer ";
+
   private final JwtTokenProvider jwtTokenProvider;
-  private GetAuthentication getAuthentication;
+  private final GetAuthentication getAuthentication;
 
   // Request로 들어오는 Jwt Token의 유효성을 검증하는 filter를 filterChain에 등록합니다.
   @Override
@@ -29,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       HttpServletResponse response,
       FilterChain filterChain) throws IOException, ServletException {
 
-    String token = jwtTokenProvider.resolveToken(request);
+    String token = this.resolveToken(request);
 
     try {
       if (token != null && jwtTokenProvider.validateToken(token)) {   // token 검증
@@ -43,5 +47,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       throw new TokenException(ErrorCode.INVALID_JWT);
     }
     filterChain.doFilter(request, response);
+  }
+
+  /**
+   * http 헤더로부터 bearer 토큰을 가져옴.
+   */
+  private String resolveToken(HttpServletRequest request) {
+    String token = request.getHeader(TOKEN_HEADER);
+
+    if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
+      return token.substring(TOKEN_PREFIX.length());
+    }
+    return null;
   }
 }
