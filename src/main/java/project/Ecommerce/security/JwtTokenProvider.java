@@ -41,12 +41,12 @@ public class JwtTokenProvider {
   public String createAccessToken(String email){
     log.info("createAccessToken 시작");
 
-//    Claims claims = Jwts.claims().setSubject(authentication.getName());
+    Claims claims = Jwts.claims().setSubject(email);
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + accessExpirationTime);
 
     return Jwts.builder()
-        .setSubject(email)
+        .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -56,15 +56,15 @@ public class JwtTokenProvider {
   /**
    * Refresh 토큰 생성
    */
-  public String createRefreshToken(String  email){
+  public String createRefreshToken(String email){
     log.info("createRefreshToken 시작");
 
-//    Claims claims = Jwts.claims().setSubject(authentication.getName());
+    Claims claims = Jwts.claims().setSubject(email);
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + refreshExpirationTime);
 
     String refreshToken = Jwts.builder()
-        .setSubject(email)
+        .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
