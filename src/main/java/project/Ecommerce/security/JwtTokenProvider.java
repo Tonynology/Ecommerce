@@ -89,14 +89,15 @@ public class JwtTokenProvider {
   }
 
   public String getUserEmail(String token) {
-    return parseClaims(token).getSubject();
+    String resolvedToken = resolveToken(token);
+    return parseClaims(resolvedToken).getSubject();
   }
 
   // 토큰 파싱
   public Claims parseClaims(String token) {
     log.info("parseClaims 시작");
     try {
-      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(resolveToken(token)).getBody();
+      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
     } catch (ExpiredJwtException e) {
       return e.getClaims();
     }
