@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static project.Ecommerce.type.ErrorCode.USER_ALREADY_EXIST;
+import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import project.Ecommerce.dto.ReIssue;
+import project.Ecommerce.dto.SignIn;
 import project.Ecommerce.dto.SignUp;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.security.JwtTokenProvider;
@@ -87,4 +90,87 @@ public class UserControllerTest {
         .andExpect(jsonPath("$.errorMessage").value("이미 존재하는 회원입니다"))
         .andExpect(status().isOk());
   }
+
+
+  @Test
+  @DisplayName("로그인 성공")
+  void successSignIn() throws Exception {
+    //given
+    String accessToken = "accessToken";
+    String refreshToken = "refreshToken";
+
+    SignIn.Request request = SignIn.Request.builder()
+        .email("jason@gmail.com")
+        .password("abc1234")
+        .build();
+
+    SignIn.Response response = SignIn.Response.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
+
+    given(userService.signIn(any()))
+        .willReturn(response);
+
+    //when
+    //then
+    mockMvc.perform(post("/user/signin")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.accessToken").value(accessToken))
+        .andExpect(jsonPath("$.refreshToken").value(refreshToken))
+        .andDo(print());
+  }
+
+  @Test
+  @DisplayName("로그인 실패 - 존재하지 않는 이메알")
+  void failSignIn() throws Exception {
+    //given
+    SignIn.Request request = SignIn.Request.builder()
+        .email("jason@gmail.com")
+        .password("abc1234")
+        .build();
+
+    given(userService.signIn(any()))
+        .willThrow(new UserException(USER_NOT_FOUND));
+
+    //when
+    //then
+    mockMvc.perform(post("/user/signin")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andDo(print())
+        .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
+        .andExpect(jsonPath("$.errorMessage").value("회원가입이 안된 이메일입니다"))
+        .andExpect(status().isOk());
+  }
+
+//  @Test
+//  @DisplayName("토큰 재발급 성공")
+//  void successReIssue() throws Exception {
+//    //given
+//    String accessToken = "accessToken";
+//    String refreshToken = "refreshToken";
+//
+//    String request = refreshToken;
+//
+//    ReIssue.Response response = ReIssue.Response.builder()
+//        .accessToken(accessToken)
+//        .refreshToken(refreshToken)
+//        .build();
+//
+//    given(userService.reIssue(any()))
+//        .willReturn(response);
+//
+//    //when
+//    //then
+//    mockMvc.perform(post("/user/reissue")
+//            .header("Authorization", request)
+//            .contentType(MediaType.APPLICATION_JSON))
+//        .andExpect(status().isOk())
+//        .andExpect(jsonPath("$.accessToken").value(accessToken))
+//        .andExpect(jsonPath("$.refreshToken").value(refreshToken))
+//        .andDo(print());
+//  }
 }

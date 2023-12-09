@@ -7,10 +7,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import project.Ecommerce.dto.ReIssue;
 import project.Ecommerce.dto.SignIn;
 import project.Ecommerce.dto.SignUp;
 import project.Ecommerce.entity.User;
+import project.Ecommerce.exception.TokenException;
 import project.Ecommerce.exception.UserException;
+import project.Ecommerce.redis.RefreshToken;
+import project.Ecommerce.redis.RefreshTokenRepository;
 import project.Ecommerce.repository.UserRepository;
 import project.Ecommerce.security.JwtTokenProvider;
 import project.Ecommerce.type.ErrorCode;
@@ -23,6 +27,8 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtTokenProvider jwtTokenProvider;
+  private final RefreshTokenRepository refreshTokenRepository;
+
 
 
   @Override
@@ -50,7 +56,24 @@ public class UserServiceImpl implements UserService {
         .accessToken(jwtTokenProvider.createAccessToken(user.getEmail()))
         .refreshToken(jwtTokenProvider.createRefreshToken(user.getEmail()))
         .build();
-
     }
 
+  @Override
+  public ReIssue.Response reIssue(String request) {
+    log.info("reIssue 시작");
+
+    String refreshToken = jwtTokenProvider.resolveToken(request);
+
+    RefreshToken token =
+        refreshTokenRepository.findByEmail(refreshToken)
+            .orElseThrow(() ->
+                new TokenException(ErrorCode.INVALID_TOKEN));
+
+    String accessToken = jwtTokenProvider.createAccessToken(token.getEmail());
+
+    return ReIssue.Response.builder()
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .build();
+  }
 }

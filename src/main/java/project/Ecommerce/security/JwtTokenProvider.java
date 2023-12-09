@@ -2,18 +2,17 @@ package project.Ecommerce.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
-import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import project.Ecommerce.redis.RefreshToken;
 import project.Ecommerce.redis.RefreshTokenRepository;
 
@@ -42,12 +41,12 @@ public class JwtTokenProvider {
   public String createAccessToken(String email){
     log.info("createAccessToken 시작");
 
-//    Claims claims = Jwts.claims().setSubject(authentication.getName());
+    Claims claims = Jwts.claims().setSubject(email);
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + accessExpirationTime);
 
     return Jwts.builder()
-        .setSubject(email)
+        .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -57,15 +56,15 @@ public class JwtTokenProvider {
   /**
    * Refresh 토큰 생성
    */
-  public String createRefreshToken(String  email){
+  public String createRefreshToken(String email){
     log.info("createRefreshToken 시작");
 
-//    Claims claims = Jwts.claims().setSubject(authentication.getName());
+    Claims claims = Jwts.claims().setSubject(email);
     Date now = new Date();
     Date expireDate = new Date(now.getTime() + refreshExpirationTime);
 
     String refreshToken = Jwts.builder()
-        .setSubject(email)
+        .setClaims(claims)
         .setIssuedAt(now)
         .setExpiration(expireDate)
         .signWith(SignatureAlgorithm.HS256, secretKey)
@@ -78,31 +77,39 @@ public class JwtTokenProvider {
   }
 
   /**
-   * http 헤더로부터 bearer 토큰을 가져옴.
+   * bearer 토큰으로부터 토큰 분리
    */
-  public String resolveToken(HttpServletRequest req) {
-    String bearerToken = req.getHeader("Authorization");
-    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-      return bearerToken.substring(7);
+  public String resolveToken(String token) {
+
+    if (StringUtils.hasText(token) && token.startsWith("Bearer ")) {
+      token =  token.substring(7);
     }
-    return null;
+    log.info("Token : {}", token);
+    return token;
+  }
+
+  // 토큰 파싱
+  public Claims parseClaims(String token) {
+    log.info("parseClaims 시작");
+    try {
+      return Jwts.parser().setSigningKey(this.secretKey).parseClaimsJws(token).getBody();
+    } catch (ExpiredJwtException e) {
+      return e.getClaims();
+    }
   }
 
   // Jwt Token의 유효성 및 만료 기간 검사
   public boolean validateToken(String jwtToken) {
+    log.info("validateToken 시작");
     try {
-      Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-      return !claims.getBody().getExpiration().before(new Date());
-    } catch (SignatureException e) {
-      log.error("Invalid JWT signature", e);
-    } catch (MalformedJwtException e) {
-      log.error("Invalid JWT token", e);
+      return !parseClaims(jwtToken).getExpiration().before(new Date());
+
     } catch (ExpiredJwtException e) {
       log.error("Expired JWT token", e);
-    } catch (UnsupportedJwtException e) {
-      log.error("Unsupported JWT token", e);
-    } catch (IllegalArgumentException e) {
-      log.error("JWT claims string is empty.", e);
+      return false; // 만료된 토큰은 false를 반환
+    } catch (SignatureException | MalformedJwtException |
+             UnsupportedJwtException | IllegalArgumentException e) {
+      log.error("Invalid JWT: " + e.getMessage());
     }
     return false;
   }

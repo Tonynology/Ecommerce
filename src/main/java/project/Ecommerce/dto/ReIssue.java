@@ -9,15 +9,6 @@ import lombok.Setter;
 public class ReIssue {
 
   @Getter
-  @Setter
-  @AllArgsConstructor
-  @NoArgsConstructor
-  @Builder
-  public static class Request {
-    private String refreshToken;
-  }
-
-  @Getter
   @AllArgsConstructor
   @NoArgsConstructor
   @Builder
