@@ -32,7 +32,6 @@ public class GetAuthentication {
         .parseClaimsJws(token)
         .getBody().getSubject();
     UserDetails userDetails = memberDetailService.loadUserByUsername(userPrincipal);
-    log.info("userDetails {}", userDetails.getUsername());
 
     return new UsernamePasswordAuthenticationToken(
         userDetails, "", userDetails.getAuthorities());
