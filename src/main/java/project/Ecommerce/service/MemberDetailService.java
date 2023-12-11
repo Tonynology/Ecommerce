@@ -28,8 +28,8 @@ public class MemberDetailService implements UserDetailsService {
           log.error(INVALID_USER_EMAIL.getDescription());
           return new TokenException(INVALID_USER_EMAIL);
         });
-    log.info("user 이름 {}, 비밀번호 {}", user.getName(), user.getPassword());
+    log.info("user 이름 {}, 이메일 {}, 비밀번호 {}", user.getName(), user.getEmail(), user.getPassword());
 
-    return new UserDetail(user.getName(), user.getPassword());
+    return new UserDetail(user.getEmail(), user.getPassword());
   }
 }

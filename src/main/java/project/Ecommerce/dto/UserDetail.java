@@ -21,12 +21,12 @@ public class UserDetail implements UserDetails {
 
   @Override
   public String getPassword() {
-    return null;
+    return this.password;
   }
 
   @Override
   public String getUsername() {
-    return null;
+    return this.username;
   }
 
   @Override

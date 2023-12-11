@@ -23,8 +23,8 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import project.Ecommerce.type.ProductStatusType;
 import project.Ecommerce.type.ProductQualityType;
+import project.Ecommerce.type.ProductStatusType;
 
 @Getter
 @Setter
@@ -63,7 +63,7 @@ public class Product {
   private LocalDateTime updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "seller_id")
   private User seller_id;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)

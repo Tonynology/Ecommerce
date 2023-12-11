@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,13 +67,13 @@ public class ProductServiceImpl implements ProductService{
   private List<String> uploadImages (List<MultipartFile> images) {
     List<String> imagePaths = new ArrayList<>();
 
-    images.forEach(Image -> {
-      if (!Image.isEmpty()) {
-        String originalImageName = Image.getOriginalFilename();
+    images.forEach(image -> {
+      if (!image.isEmpty()) {
+        String originalImageName = image.getOriginalFilename();
         String newImageName = createImageName(originalImageName);
 
         try {
-          amazonS3.putObject(bucketName, originalImageName, Image.getInputStream(), getMetadata(Image));
+          amazonS3.putObject(bucketName, originalImageName, image.getInputStream(), getMetadata(image));
         } catch (IOException e) {
           throw new ProductException(FAIL_UPLOAD_IMAGE);
         }
