@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.Ecommerce.dto.Upload;
+import project.Ecommerce.entity.Product;
 import project.Ecommerce.entity.User;
+import project.Ecommerce.entity.document.ProductDocument;
 import project.Ecommerce.exception.ProductException;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.repository.ProductRepository;
+import project.Ecommerce.repository.ProductSearchRepository;
 import project.Ecommerce.repository.UserRepository;
 import project.Ecommerce.type.ErrorCode;
 
@@ -34,6 +38,7 @@ public class ProductServiceImpl implements ProductService{
   private final UserRepository userRepository;
   private final AmazonS3Client amazonS3;
   private final ObjectMetadata objectMetadata;
+  private final ProductSearchRepository productSearchRepository;
 
 
 
@@ -47,7 +52,10 @@ public class ProductServiceImpl implements ProductService{
 
     List<String> imagePaths = uploadImages(images);
 
-    productRepository.save(request.toEntity(user, imagePaths));
+    Product product = productRepository.save(request.toEntity(user, imagePaths));
+    log.info("document 저장");
+
+    productSearchRepository.save(ProductDocument.from(product));
 
     return Upload.Response.toResponse(user.getName(), imagePaths);
   }
