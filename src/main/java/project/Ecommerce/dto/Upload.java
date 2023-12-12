@@ -6,9 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import project.Ecommerce.entity.Category;
 import project.Ecommerce.entity.Product;
 import project.Ecommerce.entity.User;
+import project.Ecommerce.type.CategoryType;
 import project.Ecommerce.type.ProductQualityType;
 import project.Ecommerce.type.ProductStatusType;
 
@@ -25,7 +25,7 @@ public class Upload {
     private String description;
     private ProductStatusType product_status;
     private ProductQualityType product_quality;
-    private Category category;
+    private CategoryType category;
 
     public Product toEntity(User user, List<String> imagePaths) {
       return Product.builder()

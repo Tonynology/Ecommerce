@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Mapping;
 import org.springframework.data.elasticsearch.annotations.Setting;
-import project.Ecommerce.entity.Category;
 import project.Ecommerce.entity.Product;
+import project.Ecommerce.type.CategoryType;
 import project.Ecommerce.type.ProductQualityType;
 import project.Ecommerce.type.ProductStatusType;
 
@@ -30,7 +30,7 @@ public class ProductDocument {
 
   private String title;
 
-  private Category category;
+  private CategoryType category;
 
   private ProductQualityType productQuality;
 

@@ -2,12 +2,7 @@
   "properties" : {
     "id" : {"type" : "keyword"},
     "title" : {"type" : "text", "analyzer" : "korean"},
-    "category": {
-      "properties": {
-        "id": {"type": "keyword"},
-        "category": {"type": "keyword"}
-      }
-    },
+    "category": {"type": "keyword"},
     "productQuality": {"type": "keyword"},
     "productStatus": {"type": "keyword"}
   }

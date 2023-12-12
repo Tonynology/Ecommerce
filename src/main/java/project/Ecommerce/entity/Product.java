@@ -23,6 +23,7 @@ import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import project.Ecommerce.type.CategoryType;
 import project.Ecommerce.type.ProductQualityType;
 import project.Ecommerce.type.ProductStatusType;
 
@@ -52,6 +53,9 @@ public class Product {
   @Enumerated(EnumType.STRING)
   private ProductQualityType product_quality;
 
+  @Enumerated(EnumType.STRING)
+  private CategoryType category;
+
   @Type(type = "json")
   @Column(columnDefinition = "longtext")
   private List<String> imagePath;
@@ -65,8 +69,4 @@ public class Product {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "seller_id")
   private User seller_id;
-
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-  @JoinColumn(name = "category_id")
-  private Category category;
 }
