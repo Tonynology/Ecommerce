@@ -11,9 +11,12 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Upload;
 import project.Ecommerce.entity.Product;
 import project.Ecommerce.entity.User;
@@ -21,6 +24,7 @@ import project.Ecommerce.entity.document.ProductDocument;
 import project.Ecommerce.exception.ProductException;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.repository.ProductRepository;
+import project.Ecommerce.repository.ProductSearchNativeQueryRepository;
 import project.Ecommerce.repository.ProductSearchRepository;
 import project.Ecommerce.repository.UserRepository;
 import project.Ecommerce.type.ErrorCode;
@@ -38,6 +42,7 @@ public class ProductServiceImpl implements ProductService{
   private final AmazonS3Client amazonS3;
   private final ObjectMetadata objectMetadata;
   private final ProductSearchRepository productSearchRepository;
+  private final ProductSearchNativeQueryRepository productSearchNativeQueryRepository;
 
 
 
@@ -57,6 +62,17 @@ public class ProductServiceImpl implements ProductService{
     productSearchRepository.save(ProductDocument.from(product));
 
     return Upload.Response.toResponse(user.getName(), imagePaths);
+  }
+
+  /**
+   * 상품 검색 기능
+   * @param request
+   * @param pageable
+   * @return Page<productDocument>
+   */
+  @Override
+  public Page<ProductDocument> searchProduct(Request request, Pageable pageable) {
+    return productSearchNativeQueryRepository.findByProductName(request, pageable);
   }
 
   /**
