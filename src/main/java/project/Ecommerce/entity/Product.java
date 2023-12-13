@@ -3,7 +3,6 @@ package project.Ecommerce.entity;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
