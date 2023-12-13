@@ -1,0 +1,9 @@
+{
+  "properties" : {
+    "id" : {"type" : "keyword"},
+    "title" : {"type" : "text", "analyzer" : "korean"},
+    "category": {"type": "keyword"},
+    "productQuality": {"type": "keyword"},
+    "productStatus": {"type": "keyword"}
+  }
+}

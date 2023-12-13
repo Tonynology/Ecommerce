@@ -88,6 +88,11 @@ public class JwtTokenProvider {
     return token;
   }
 
+  public String getUserEmail(String token) {
+    String resolvedToken = resolveToken(token);
+    return parseClaims(resolvedToken).getSubject();
+  }
+
   // 토큰 파싱
   public Claims parseClaims(String token) {
     log.info("parseClaims 시작");

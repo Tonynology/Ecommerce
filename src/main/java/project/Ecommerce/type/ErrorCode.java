@@ -15,6 +15,8 @@ public enum ErrorCode {
   INVALID_USER_PW("유저의 비밀번호가 타당하지 않습니다."),
   INVALID_USER_EMAIL("이메일이 타당하지 않습니다."),
   INVALID_TOKEN("토큰이 타당하지 않습니다."),
+
+  FAIL_UPLOAD_IMAGE("이미지 업로드에 실패하였습니다."),
   ;
 
   private final String description;

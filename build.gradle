@@ -28,6 +28,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'com.vladmihalcea:hibernate-types-52:2.16.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 
 	runtimeOnly 'com.mysql:mysql-connector-j:8.0.33'
 
