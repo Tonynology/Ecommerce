@@ -24,7 +24,10 @@ public enum ErrorCode {
 
   CHATROOM_ALREADY_EXIST("이미 존재하는 채팅방입니다."),
   CHATROOM_NOT_EXIST("이미 존재하는 채팅방입니다."),
-  UNAUTHORIZED_USER_IN_CHATROOM("이 채팅방에 허용된 사용자가 아닙니다.")
+  UNAUTHORIZED_USER_IN_CHATROOM("이 채팅방에 허용된 사용자가 아닙니다."),
+  CANNOT_SEND_CHAT_YOURSELF("본인에게 채팅을 보낼 수 없습니다."),
+  CANNOT_SEND_MESSAGE_YOURSELF("본인에게 메세지를 보낼 수 없습니다."),
+  
   ;
 
   private final String description;

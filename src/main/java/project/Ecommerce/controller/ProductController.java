@@ -57,7 +57,6 @@ public class ProductController {
   @PostMapping("/{productId}/watchlist")
   public ResponseEntity<AddWatchList.Response> addWatchList(
       @PathVariable Long productId) {
-    log.info("컨트롤러 adwatchlist 시작");
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String userEmail = ((UserDetail) authentication.getPrincipal()).getUsername();
     return ResponseEntity.ok(productService.addWatchList(productId, userEmail));
