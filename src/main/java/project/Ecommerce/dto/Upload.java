@@ -35,7 +35,7 @@ public class Upload {
           .product_quality(this.product_quality)
           .product_status(this.product_status)
           .category(this.category)
-          .seller_id(user)
+          .seller(user)
           .imagePath(imagePaths)
           .build();
     }

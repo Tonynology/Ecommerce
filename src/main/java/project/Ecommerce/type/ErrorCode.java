@@ -21,6 +21,10 @@ public enum ErrorCode {
 
   ALREADY_ADD_WATCHLIST("이미 관심목록에 추가한 삼품입니다."),
   NOT_FOUND_WATCHLIST("관심목록에 없는 삼품입니다."),
+
+  CHATROOM_ALREADY_EXIST("이미 존재하는 채팅방입니다."),
+  CHATROOM_NOT_EXIST("이미 존재하는 채팅방입니다."),
+  UNAUTHORIZED_USER_IN_CHATROOM("이 채팅방에 허용된 사용자가 아닙니다.")
   ;
 
   private final String description;
