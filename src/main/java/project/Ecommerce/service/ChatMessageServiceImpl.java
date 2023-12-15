@@ -1,5 +1,6 @@
 package project.Ecommerce.service;
 
+import static project.Ecommerce.type.ErrorCode.CANNOT_SEND_MESSAGE_YOURSELF;
 import static project.Ecommerce.type.ErrorCode.CHATROOM_NOT_EXIST;
 import static project.Ecommerce.type.ErrorCode.UNAUTHORIZED_USER_IN_CHATROOM;
 import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
@@ -10,14 +11,13 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import project.Ecommerce.dto.ChatMessageDto;
 import project.Ecommerce.dto.ChatMessageDto.Response;
-import project.Ecommerce.dto.ChatRoomDto;
 import project.Ecommerce.entity.ChatRoom;
 import project.Ecommerce.entity.User;
+import project.Ecommerce.exception.ChatMessageException;
 import project.Ecommerce.exception.ChatRoomException;
 import project.Ecommerce.exception.UserException;
 import project.Ecommerce.repository.ChatMessageRepository;
 import project.Ecommerce.repository.ChatRoomRepository;
-import project.Ecommerce.repository.ProductRepository;
 import project.Ecommerce.repository.UserRepository;
 
 @Slf4j
@@ -44,10 +44,16 @@ public class ChatMessageServiceImpl implements ChatMessageService{
       throw new ChatRoomException(UNAUTHORIZED_USER_IN_CHATROOM);
     }
 
+    User receiver = chatRoom.getReceiver();
+
+    if (sender.equals(receiver)) {
+      throw new ChatMessageException(CANNOT_SEND_MESSAGE_YOURSELF);
+    }
+
     chatMessageRepository.save(request.toEntity(chatRoom, sender));
 
     Response response = Response.toResponse(
-        sender.getName(), chatRoom.getReceiver().getName(),
+        sender.getName(), receiver.getName(),
         chatRoom.getProduct().getTitle(), request.getContent());
 
     messagingTemplate.convertAndSend("/sub/chat/" + chatRoomId, response);

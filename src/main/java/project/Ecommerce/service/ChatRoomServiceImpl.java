@@ -1,5 +1,6 @@
 package project.Ecommerce.service;
 
+import static project.Ecommerce.type.ErrorCode.CANNOT_SEND_CHAT_YOURSELF;
 import static project.Ecommerce.type.ErrorCode.CHATROOM_ALREADY_EXIST;
 import static project.Ecommerce.type.ErrorCode.PRODUCT_NOT_FOUND;
 import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
@@ -35,22 +36,21 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
-    log.info("product : {}", product);
 
     if (chatRoomRepository.existsChatRoomBySenderAndProduct(sender, product)) {
       throw new ChatRoomException(CHATROOM_ALREADY_EXIST);
     }
-    log.info("if 통과");
 
     User receiver = product.getSeller();
-    log.info("receiver : {}", receiver);
+    if (sender.equals(receiver)) {
+      throw new ChatRoomException(CANNOT_SEND_CHAT_YOURSELF);
+    }
 
     chatRoomRepository.save(ChatRoom.builder()
             .sender(sender)
             .receiver(receiver)
             .product(product)
             .build());
-    log.info("save 통과");
 
     return ChatRoomDto.Response.toResponse(
         sender.getName(), receiver.getName(), product.getTitle());
