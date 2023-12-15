@@ -17,6 +17,10 @@ public enum ErrorCode {
   INVALID_TOKEN("토큰이 타당하지 않습니다."),
 
   FAIL_UPLOAD_IMAGE("이미지 업로드에 실패하였습니다."),
+  PRODUCT_NOT_FOUND("존재하지 않는 상품입니다."),
+
+  ALREADY_ADD_WATCHLIST("이미 관심목록에 추가한 삼품입니다."),
+  NOT_FOUND_WATCHLIST("관심목록에 없는 삼품입니다."),
   ;
 
   private final String description;

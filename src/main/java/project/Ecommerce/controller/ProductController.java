@@ -10,16 +10,20 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.DeleteWatchList;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Upload;
 import project.Ecommerce.dto.UserDetail;
+import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.entity.document.ProductDocument;
 import project.Ecommerce.service.ProductService;
 
@@ -48,5 +52,22 @@ public class ProductController {
       @RequestBody Request request,
       @PageableDefault Pageable pageable) {
     return ResponseEntity.ok(productService.searchProduct(request, pageable));
+  }
+
+  @PostMapping("/{productId}/watchlist")
+  public ResponseEntity<AddWatchList.Response> addWatchList(
+      @PathVariable Long productId) {
+    log.info("컨트롤러 adwatchlist 시작");
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userEmail = ((UserDetail) authentication.getPrincipal()).getUsername();
+    return ResponseEntity.ok(productService.addWatchList(productId, userEmail));
+  }
+
+  @DeleteMapping("/{productId}/watchlist")
+  public ResponseEntity<DeleteWatchList.Response> deleteWatchList(
+      @PathVariable Long productId) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userEmail = ((UserDetail) authentication.getPrincipal()).getUsername();
+    return ResponseEntity.ok(productService.deleteWatchList(productId, userEmail));
   }
 }

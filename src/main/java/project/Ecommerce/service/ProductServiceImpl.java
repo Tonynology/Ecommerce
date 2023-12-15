@@ -1,6 +1,10 @@
 package project.Ecommerce.service;
 
+import static project.Ecommerce.type.ErrorCode.ALREADY_ADD_WATCHLIST;
 import static project.Ecommerce.type.ErrorCode.FAIL_UPLOAD_IMAGE;
+import static project.Ecommerce.type.ErrorCode.NOT_FOUND_WATCHLIST;
+import static project.Ecommerce.type.ErrorCode.PRODUCT_NOT_FOUND;
+import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -16,18 +20,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.AddWatchList;
+import project.Ecommerce.dto.DeleteWatchList;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Upload;
 import project.Ecommerce.entity.Product;
 import project.Ecommerce.entity.User;
+import project.Ecommerce.entity.WatchList;
 import project.Ecommerce.entity.document.ProductDocument;
 import project.Ecommerce.exception.ProductException;
 import project.Ecommerce.exception.UserException;
+import project.Ecommerce.exception.WatchListException;
 import project.Ecommerce.repository.ProductRepository;
 import project.Ecommerce.repository.ProductSearchNativeQueryRepository;
 import project.Ecommerce.repository.ProductSearchRepository;
 import project.Ecommerce.repository.UserRepository;
-import project.Ecommerce.type.ErrorCode;
+import project.Ecommerce.repository.WatchListRepository;
 
 @Slf4j
 @Service
@@ -43,6 +51,7 @@ public class ProductServiceImpl implements ProductService{
   private final ObjectMetadata objectMetadata;
   private final ProductSearchRepository productSearchRepository;
   private final ProductSearchNativeQueryRepository productSearchNativeQueryRepository;
+  private final WatchListRepository watchListRepository;
 
 
 
@@ -52,7 +61,7 @@ public class ProductServiceImpl implements ProductService{
       Upload.Request request, String userEmail) {
 
     User user = userRepository.findUserByEmail(userEmail)
-        .orElseThrow(() -> new UserException(ErrorCode.USER_NOT_FOUND));
+        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
 
     List<String> imagePaths = uploadImages(images);
 
@@ -73,6 +82,57 @@ public class ProductServiceImpl implements ProductService{
   @Override
   public Page<ProductDocument> searchProduct(Request request, Pageable pageable) {
     return productSearchNativeQueryRepository.findByProductName(request, pageable);
+  }
+
+  /**
+   * 상품을 관심 목록에 추가
+   * @param id
+   * @param userEmail
+   * @return
+   */
+  @Override
+  @Transactional
+  public AddWatchList.Response addWatchList(Long id, String userEmail) {
+    log.info("addWatchList 시작");
+    User user = userRepository.findUserByEmail(userEmail)
+        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    if (watchListRepository.existsWatchListByUserAndProduct(user, product)) {
+      throw new WatchListException(ALREADY_ADD_WATCHLIST);
+    }
+
+    watchListRepository.save(WatchList.builder()
+            .user(user)
+            .product(product)
+            .build());
+
+    return AddWatchList.Response.toResponse(user.getEmail(), product.getTitle());
+  }
+
+  /**
+   * 상품을 관심 목록에서 삭제
+   * @param productId
+   * @param userEmail
+   * @return
+   */
+  @Override
+  public DeleteWatchList.Response deleteWatchList(Long productId, String userEmail) {
+    User user = userRepository.findUserByEmail(userEmail)
+        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+
+    WatchList watchList = watchListRepository.findWatchListByUserAndProduct(user, product)
+            .orElseThrow(() -> new WatchListException(NOT_FOUND_WATCHLIST));
+
+    watchListRepository.delete(watchList);
+
+    return DeleteWatchList.Response.toResponse(user.getEmail(), product.getTitle());
   }
 
   /**

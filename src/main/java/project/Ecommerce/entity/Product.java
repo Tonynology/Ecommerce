@@ -1,8 +1,8 @@
 package project.Ecommerce.entity;
 
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -34,6 +35,7 @@ import project.Ecommerce.type.ProductStatusType;
 @Builder
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@TypeDef(name = "json", typeClass = JsonStringType.class)
 public class Product {
 
   @Id

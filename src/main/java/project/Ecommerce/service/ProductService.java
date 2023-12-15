@@ -4,8 +4,10 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.DeleteWatchList;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Upload;
+import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.entity.document.ProductDocument;
 
 public interface ProductService {
@@ -13,4 +15,8 @@ public interface ProductService {
       Upload.Request request, String userEmail);
 
   Page<ProductDocument> searchProduct(Request request, Pageable pageable);
+
+  AddWatchList.Response addWatchList(Long id, String userEmail);
+
+  DeleteWatchList.Response deleteWatchList(Long id, String userEmail);
 }
