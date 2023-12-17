@@ -92,7 +92,7 @@ public class WalletServiceImpl implements WalletService{
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
-    if (!(product.getProduct_status().equals(ProductStatusType.SAIL))) {
+    if (!(product.getProductStatus().equals(ProductStatusType.SAIL))) {
       throw new PaymentException(PRODUCT_NOT_ONSAIL);
     }
 

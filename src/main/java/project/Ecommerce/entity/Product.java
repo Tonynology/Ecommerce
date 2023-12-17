@@ -24,6 +24,8 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import project.Ecommerce.dto.SearchProduct;
+import project.Ecommerce.dto.Update;
 import project.Ecommerce.type.CategoryType;
 import project.Ecommerce.type.ProductQualityType;
 import project.Ecommerce.type.ProductStatusType;
@@ -50,7 +52,8 @@ public class Product {
   private String description;
 
   @Enumerated(EnumType.STRING)
-  private ProductStatusType product_status;
+  @Column(name = "product_status")
+  private ProductStatusType productStatus;
 
   @Enumerated(EnumType.STRING)
   private ProductQualityType product_quality;
@@ -71,4 +74,29 @@ public class Product {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "seller_id")
   private User seller;
+
+  public SearchProduct.Response toDto() {
+    return SearchProduct.Response.builder()
+        .productName(this.title)
+        .price(this.price)
+        .description(this.description)
+        .product_quality(this.product_quality)
+        .productStatus(this.productStatus)
+        .category(this.category)
+        .build();
+  }
+
+  public void update(Update.Request request, List<String> imagePath) {
+    this.title = request.getTitle();
+    this.price = request.getPrice();
+    this.description = request.getDescription();
+    this.product_quality = request.getProduct_quality();
+    this.productStatus = request.getProductStatus();
+    this.category = request.getCategory();
+    this.imagePath = imagePath;
+  }
+
+  public void update() {
+    this.productStatus = ProductStatusType.SOLD;
+  }
 }

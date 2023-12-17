@@ -32,6 +32,9 @@ public enum ErrorCode {
   LESS_MONEY_WALLET("물건을 사기에 돈이 부족합니다."),
   WALLET_ALREADY_EXISTS("지갑이 이미 존재합니다."),
   PRODUCT_NOT_ONSAIL("판매중인 상품이 아닙니다."),
+
+  SELLER_DIFFERENT("상품 판매자가 다름니다."),
+  DELETE_IMAGE_FAILED("이미지 삭제를 실패하였습니다."),
   ;
 
   private final String description;
