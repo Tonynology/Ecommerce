@@ -27,7 +27,11 @@ public enum ErrorCode {
   UNAUTHORIZED_USER_IN_CHATROOM("이 채팅방에 허용된 사용자가 아닙니다."),
   CANNOT_SEND_CHAT_YOURSELF("본인에게 채팅을 보낼 수 없습니다."),
   CANNOT_SEND_MESSAGE_YOURSELF("본인에게 메세지를 보낼 수 없습니다."),
-  
+
+  WALLET_NOT_FOUND("지갑을 불러올 수 없습니다."),
+  LESS_MONEY_WALLET("물건을 사기에 돈이 부족합니다."),
+  WALLET_ALREADY_EXISTS("지갑이 이미 존재합니다."),
+  PRODUCT_NOT_ONSAIL("판매중인 상품이 아닙니다."),
   ;
 
   private final String description;
