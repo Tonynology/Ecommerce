@@ -20,14 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.dto.Delete;
 import project.Ecommerce.dto.DeleteWatchList;
+import project.Ecommerce.dto.ProductDetail;
 import project.Ecommerce.dto.SearchProduct;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Update;
 import project.Ecommerce.dto.Upload;
 import project.Ecommerce.dto.UserDetail;
-import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.entity.document.ProductDocument;
 import project.Ecommerce.service.ProductService;
 
@@ -93,5 +94,10 @@ public class ProductController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String userEmail = ((UserDetail) authentication.getPrincipal()).getUsername();
     return ResponseEntity.ok(productService.deleteProduct(productId, userEmail));
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<ProductDetail.Response> getProduct(@PathVariable Long id) {
+    return ResponseEntity.ok(productService.getProduct(id));
   }
 }
