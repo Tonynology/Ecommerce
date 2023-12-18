@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import project.Ecommerce.type.CategoryType;
+import project.Ecommerce.type.ProductQualityType;
+import project.Ecommerce.type.ProductStatusType;
 
 public class SearchProduct {
 
@@ -17,5 +20,18 @@ public class SearchProduct {
     private String productName;
   }
 
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public static class Response {
+    private String productName;
+    private double price;
+    private String description;
+    private ProductStatusType productStatus;
+    private ProductQualityType product_quality;
+    private CategoryType category;
 
+
+  }
 }

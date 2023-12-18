@@ -12,7 +12,7 @@ import project.Ecommerce.type.CategoryType;
 import project.Ecommerce.type.ProductQualityType;
 import project.Ecommerce.type.ProductStatusType;
 
-public class Upload {
+public class Update {
 
   @Getter
   @Setter
@@ -53,7 +53,7 @@ public class Upload {
       return Response.builder()
           .userName(userName)
           .imagePaths(imagePaths)
-          .message("상품이 등록되었습니다.")
+          .message("상품이 업데이트되었습니다.")
           .build();
     }
   }

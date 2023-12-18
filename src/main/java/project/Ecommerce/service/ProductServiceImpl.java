@@ -1,28 +1,37 @@
 package project.Ecommerce.service;
 
 import static project.Ecommerce.type.ErrorCode.ALREADY_ADD_WATCHLIST;
+import static project.Ecommerce.type.ErrorCode.DELETE_IMAGE_FAILED;
 import static project.Ecommerce.type.ErrorCode.FAIL_UPLOAD_IMAGE;
 import static project.Ecommerce.type.ErrorCode.NOT_FOUND_WATCHLIST;
 import static project.Ecommerce.type.ErrorCode.PRODUCT_NOT_FOUND;
+import static project.Ecommerce.type.ErrorCode.SELLER_DIFFERENT;
 import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import project.Ecommerce.dto.AddWatchList;
+import project.Ecommerce.dto.Delete;
 import project.Ecommerce.dto.DeleteWatchList;
+import project.Ecommerce.dto.SearchProduct;
 import project.Ecommerce.dto.SearchProduct.Request;
+import project.Ecommerce.dto.Update;
 import project.Ecommerce.dto.Upload;
 import project.Ecommerce.entity.Product;
 import project.Ecommerce.entity.User;
@@ -71,6 +80,95 @@ public class ProductServiceImpl implements ProductService{
     productSearchRepository.save(ProductDocument.from(product));
 
     return Upload.Response.toResponse(user.getName(), imagePaths);
+  }
+
+  @Override
+  @Transactional
+  public Update.Response updateProduct(
+      Long id, String userEmail, List<MultipartFile> files, Update.Request request) {
+
+    User user = userRepository.findUserByEmail(userEmail)
+        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    if (!(product.getSeller().equals(user))) {
+      throw new ProductException(SELLER_DIFFERENT);
+    }
+
+    deleteImages(product);
+    List<String> imagePaths = uploadImages(files);
+    product.update(request, imagePaths);
+
+    productRepository.save(product);
+    productSearchRepository.delete(ProductDocument.from(product));
+    productSearchRepository.save(ProductDocument.from(product));
+
+    return Update.Response.toResponse(user.getName(), imagePaths);
+  }
+
+  /**
+   * 최신 목록, sail 순으로 상품을 불러온다.
+   * @return
+   */
+  @Override
+  public Page<SearchProduct.Response> getProductList() {
+
+    List<Product> products = productRepository.findByOrderByProductStatusAscUpdatedAtDesc();
+
+    return new PageImpl<>(
+        products.stream()
+            .map(Product::toDto)
+            .collect(Collectors.toList()));
+  }
+
+  /**
+   * 상품 삭제
+   * @param productId
+   * @param userEmail
+   * @return
+   */
+  @Override
+  public Delete.Response deleteProduct(Long productId, String userEmail) {
+
+    User user = userRepository.findUserByEmail(userEmail)
+        .orElseThrow(() -> new UserException(USER_NOT_FOUND));
+
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    if (!(product.getSeller().equals(user))) {
+      throw new ProductException(SELLER_DIFFERENT);
+    }
+
+    deleteImages(product);
+    productRepository.delete(product);
+    productSearchRepository.delete(ProductDocument.from(product));
+
+    return Delete.Response.toResponse(user.getName(), product.getTitle());
+  }
+
+  /**
+   * s3 이미지 삭제
+   * @param product
+   */
+  private void deleteImages(Product product) {
+    for (String imagePath : product.getImagePath()) {
+      try {
+        imagePath = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+
+        String fileName = imagePath.substring(imagePath.lastIndexOf("/") + 1);
+        String decodedFileName = URLDecoder.decode(fileName, StandardCharsets.UTF_8);
+        String key = decodedFileName;
+
+        amazonS3.deleteObject(bucketName, key);
+        log.info("S3 object deleted successfully.");
+      } catch (Exception e) {
+        log.error("Error deleting S3 object", e);
+        throw new ProductException(DELETE_IMAGE_FAILED);
+      }
+    }
   }
 
   /**
@@ -149,7 +247,7 @@ public class ProductServiceImpl implements ProductService{
         String newImageName = createImageName(originalImageName);
 
         try {
-          amazonS3.putObject(bucketName, originalImageName, image.getInputStream(), getMetadata(image));
+          amazonS3.putObject(bucketName, newImageName, image.getInputStream(), getMetadata(image));
         } catch (IOException e) {
           throw new ProductException(FAIL_UPLOAD_IMAGE);
         }

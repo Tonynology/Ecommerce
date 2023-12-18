@@ -32,7 +32,7 @@ public class ProductDocument {
 
   private CategoryType category;
 
-  private ProductQualityType productQuality;
+  private ProductQualityType product_quality;
 
   private ProductStatusType productStatus;
 
@@ -41,8 +41,8 @@ public class ProductDocument {
         .id(product.getId())
         .title(product.getTitle())
         .category(product.getCategory())
-        .productQuality(product.getProduct_quality())
-        .productStatus(product.getProduct_status())
+        .product_quality(product.getProduct_quality())
+        .productStatus(product.getProductStatus())
         .build();
 
   }
