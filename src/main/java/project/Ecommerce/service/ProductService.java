@@ -4,13 +4,14 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.dto.Delete;
 import project.Ecommerce.dto.DeleteWatchList;
+import project.Ecommerce.dto.ProductDetail;
 import project.Ecommerce.dto.SearchProduct;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Update;
 import project.Ecommerce.dto.Upload;
-import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.entity.document.ProductDocument;
 
 public interface ProductService {
@@ -29,4 +30,6 @@ public interface ProductService {
       Long id, String userEmail, List<MultipartFile> files, Update.Request request);
 
   Delete.Response deleteProduct(Long productId, String userEmail);
+
+  ProductDetail.Response getProduct(Long id);
 }

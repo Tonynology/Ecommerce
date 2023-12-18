@@ -29,6 +29,8 @@ import org.springframework.web.multipart.MultipartFile;
 import project.Ecommerce.dto.AddWatchList;
 import project.Ecommerce.dto.Delete;
 import project.Ecommerce.dto.DeleteWatchList;
+import project.Ecommerce.dto.Notify;
+import project.Ecommerce.dto.ProductDetail;
 import project.Ecommerce.dto.SearchProduct;
 import project.Ecommerce.dto.SearchProduct.Request;
 import project.Ecommerce.dto.Update;
@@ -45,6 +47,7 @@ import project.Ecommerce.repository.ProductSearchNativeQueryRepository;
 import project.Ecommerce.repository.ProductSearchRepository;
 import project.Ecommerce.repository.UserRepository;
 import project.Ecommerce.repository.WatchListRepository;
+import project.Ecommerce.type.NotificationType;
 
 @Slf4j
 @Service
@@ -61,6 +64,7 @@ public class ProductServiceImpl implements ProductService{
   private final ProductSearchRepository productSearchRepository;
   private final ProductSearchNativeQueryRepository productSearchNativeQueryRepository;
   private final WatchListRepository watchListRepository;
+  private final NotificationService notificationService;
 
 
 
@@ -80,6 +84,17 @@ public class ProductServiceImpl implements ProductService{
     productSearchRepository.save(ProductDocument.from(product));
 
     return Upload.Response.toResponse(user.getName(), imagePaths);
+  }
+
+  @Override
+  public ProductDetail.Response getProduct(Long id) {
+
+    Product product = productRepository.findById(id)
+        .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
+
+    List<String> imagePaths = product.getImagePath();
+
+    return ProductDetail.Response.toResponse(product, imagePaths);
   }
 
   @Override
@@ -105,6 +120,16 @@ public class ProductServiceImpl implements ProductService{
     productSearchRepository.delete(ProductDocument.from(product));
     productSearchRepository.save(ProductDocument.from(product));
 
+    // 상품 업데이트 후 관심 목록에 있는 유저들에게 알림 보내기
+    List<WatchList> watchLists = watchListRepository.findAllByProduct(product);
+    watchLists.forEach(watchList -> {
+      User watchListUser = watchList.getUser();
+      notificationService.send(Notify.Request.builder()
+          .receiver(watchListUser)
+          .notificationType(NotificationType.PRODUCT_UPDATE)
+          .path("/product/" + product.getId())
+          .build());
+    });
     return Update.Response.toResponse(user.getName(), imagePaths);
   }
 

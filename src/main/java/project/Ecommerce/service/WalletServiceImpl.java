@@ -7,7 +7,6 @@ import static project.Ecommerce.type.ErrorCode.USER_NOT_FOUND;
 import static project.Ecommerce.type.ErrorCode.WALLET_ALREADY_EXISTS;
 import static project.Ecommerce.type.ErrorCode.WALLET_NOT_FOUND;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
