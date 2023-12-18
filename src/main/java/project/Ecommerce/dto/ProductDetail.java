@@ -27,7 +27,7 @@ public class ProductDetail {
     private ProductStatusType productStatus;
     private ProductQualityType product_quality;
     private CategoryType category;
-    private User seller;
+    private String sellerName;
     private List<String> imagePath;
 
     public static Response toResponse(Product product, List<String> filePaths) {
@@ -38,7 +38,7 @@ public class ProductDetail {
           .productStatus(product.getProductStatus())
           .product_quality(product.getProduct_quality())
           .category(product.getCategory())
-          .seller(product.getSeller())
+          .sellerName(product.getSeller().getName())
           .imagePath(filePaths)
           .build();
     }

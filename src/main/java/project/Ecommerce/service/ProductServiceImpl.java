@@ -89,11 +89,13 @@ public class ProductServiceImpl implements ProductService{
   @Override
   public ProductDetail.Response getProduct(Long id) {
 
+    log.info("여기1");
     Product product = productRepository.findById(id)
         .orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
 
+    log.info("여기2");
     List<String> imagePaths = product.getImagePath();
-
+    log.info("여기3");
     return ProductDetail.Response.toResponse(product, imagePaths);
   }
 
