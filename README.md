@@ -1,5 +1,5 @@
 # 물품 거래 플랫폼 서비스
-유저간 물건을 등록하고 구매/판매를 하도록 하는 서비스입니다.
+유저간 물건을 등록하고 구매/판매를 하도록 하는 서비스 (11.13 ~ 12.15)
 
 ## 프로젝트 기능 및 설계
 
@@ -61,8 +61,8 @@
 ![mysql](https://github.com/Tonynology/Ecommerce/assets/36941592/04d33c4d-3d69-461d-8082-3c7fc4588eb7)
 ![git](https://github.com/Tonynology/Ecommerce/assets/36941592/e214ae07-79c3-4ac3-91eb-b6760ca4984a)
 ![elasticsearch](https://github.com/Tonynology/Ecommerce/assets/36941592/2a822fc3-f7fb-469d-bf97-bda60d4ca78d)
-<img src="https://img.shields.io/badge/amazons3-569A31?style=flat-square&logo=amazons3&logoColor=white"/>
-<img src="https://img.shields.io/badge/apachekafka-231F20?style=flat-square&logo=apachekafka&logoColor=white"/>
-
-
-## Trouble Shooting
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/3b57a5f6-f185-4159-8e21-f12ab6d35b38)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/6d9e8842-4b0e-4838-ba44-dd20295cceb3)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/b2390b54-48c8-436a-9be0-1b9558987246)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/54649a35-c24e-4e35-ae9c-e656649772c8)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/54649a35-c24e-4e35-ae9c-e656649772c8)
