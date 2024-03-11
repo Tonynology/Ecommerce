@@ -65,4 +65,4 @@
 ![image](https://github.com/Tonynology/Ecommerce/assets/36941592/6d9e8842-4b0e-4838-ba44-dd20295cceb3)
 ![image](https://github.com/Tonynology/Ecommerce/assets/36941592/b2390b54-48c8-436a-9be0-1b9558987246)
 ![image](https://github.com/Tonynology/Ecommerce/assets/36941592/54649a35-c24e-4e35-ae9c-e656649772c8)
-![image](https://github.com/Tonynology/Ecommerce/assets/36941592/54649a35-c24e-4e35-ae9c-e656649772c8)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/eea4c105-c297-4713-89b0-10001fd92595)
