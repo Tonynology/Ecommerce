@@ -44,15 +44,11 @@
   * 사용자는 지갑의 잔돈을 확인할 수 있다.
 
 
-### 채팅
-* 채팅방 만들기 기능
-  * 사용자는 판매자가 등록한 물품에 대하여 채팅을 보낼 수 있다.
-
-
 
 
 ## ERD
-![ERDD](https://github.com/Tonynology/Ecommerce/assets/36941592/3ecb7e5d-80bd-4d44-824c-231ea07a9e6f)
+![image](https://github.com/Tonynology/Ecommerce/assets/36941592/e4b5fe77-d6f3-4295-a262-6c172198babc)
+
 
 ## 사용 기술
 
