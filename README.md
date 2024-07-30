@@ -44,10 +44,19 @@
   * 사용자는 지갑의 잔돈을 확인할 수 있다.
 
 
-
-
 ## ERD
-![image](https://github.com/Tonynology/Ecommerce/assets/36941592/e4b5fe77-d6f3-4295-a262-6c172198babc)
+![image](https://github.com/user-attachments/assets/b1b606d2-b44e-4cec-af8c-8c637a3e338e)
+
+
+## Commit Message Rule
+
+- `feat` : 새로운 기능 추가
+- `fix` : 버그 수정
+- `docs` : 문서 수정
+- `style` : 스타일 관련 (코드 포맷팅, 세미콜론 누락, 코드 자체의 변경이 없는 경우)
+- `refactor` : 코드 리팩토링
+- `test` : 테스트 코드
+- `chore` : 빌드 업무, 패키지 매니저 수정
 
 
 ## 사용 기술
