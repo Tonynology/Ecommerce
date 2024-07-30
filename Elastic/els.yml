@@ -18,7 +18,8 @@ services:
 
   kibana:
     container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.9.1
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    platform: linux/amd64
     environment:
       SERVER_NAME: kibana
       # Elasticsearch 기본 호스트는 http://elasticsearch:9200 이다. 
